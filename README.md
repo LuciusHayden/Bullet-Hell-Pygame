@@ -18,6 +18,8 @@ This is just a simple game, doesnt really have any special features other than j
 
 - Lives and Health reminder at the top. A basic feature that almost every game has to show you how many lives you have remaining and how much health you have left.
 
+- If a player tries to hide behind the walls of the game they will take continuous damage (1 per 200 ms) until they return to the map. This allows for more interesting ways to escape a bunch of projectiles while stilling having a cost for a 'get out of jail free card'
+
 # Lessons learned
 
 I learned how to use the Pygame module, how to use classes more efficently, and finally it helped me get practice not only writing code but also debugging it which was definetly needed for me. The practical experience will probably help me with many projects in the future (along with the debugging skills and classes) while the knowledge on how to use the Pygame module will probably come in handy for a few of my projects in the future.
@@ -32,5 +34,4 @@ These are all the modules that are all modules that are imported
 - import math
 - import time
 
-# Current issues
-Your player character can go into the wall which would allow you to survive infinitely, kinda pointless since there is no leaderboard but its a bug I plan on finishing soon. 
+

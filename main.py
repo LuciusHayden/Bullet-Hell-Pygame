@@ -14,6 +14,8 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 projectiles = pygame.sprite.Group()
 projectiles2 = pygame.sprite.Group()
 projectiles3 = pygame.sprite.Group()
+projectiles4 = pygame.sprite.Group()
+projectiles5 = pygame.sprite.Group()
 enemies = pygame.sprite.Group()
 
 difficulty = "easy"
@@ -87,7 +89,6 @@ class Projectile(pygame.sprite.Sprite):
 def game_end():
     global lost_start_time
     global show_player
-    
     screen.blit(lost_text, (screen_width - lost_text.get_width() - 675, 450))
     lost_start_time = pygame.time.get_ticks()
     for enemy in enemies:
@@ -99,13 +100,15 @@ def game_end():
     for projectile in projectiles3:
         projectile.kill()
     show_player = False      
+
 player = Player(800, 500, health, 5, 0.5, lives)
 
 enemy1 = Enemy(random.randint(100, 300), random.randint(600, 1000), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
 enemy2 = Enemy(random.randint(1200, 1500), random.randint(200, 500), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
 enemy3 = Enemy(random.randint(100, 300), random.randint(600, 1000), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
 enemy4 = Enemy(random.randint(1200, 1500), random.randint(200, 500), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
-enemies.add(enemy1,enemy2,enemy3,enemy4)
+enemy5 = Enemy(random.randint(750, 850), random.randint(450, 550), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
+enemies.add(enemy1,enemy2,enemy3,enemy4, enemy5)
 
 display_lost_life = False
 show_projectiles = True
@@ -130,6 +133,7 @@ while run:
     screen.blit(timer_text, (10, 10))
     screen.blit(lives_text, (screen_width - lives_text.get_width() - 200, 10))
 
+
     if not damage_cd and not life_cd:
         for enemy in enemies:
             if player.character.colliderect(enemy.character):
@@ -142,8 +146,12 @@ while run:
                 projectiles.remove(projectile)
                 damage_cd = True
                 cd_start = pygame.time.get_ticks()
+        if player.character.x > screen_width or player.character.x < 0 or player.character.y > screen_height or player.character.y < 0:
+            player.health -= 1
+            damage_cd = True
+            cd_start = pygame.time.get_ticks()
     if damage_cd:
-        if pygame.time.get_ticks() - cd_start > 100:
+        if pygame.time.get_ticks() - cd_start > 200:
             damage_cd = False
 
     if player.health <= 0:
@@ -163,7 +171,9 @@ while run:
         if pygame.time.get_ticks() - lost_start_time > 3000:
             display_lost_life = False
             life_cd = False
-        
+
+   
+
     for enemy in enemies:
         if run_time % 1000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 15,10, 0.3, (player.character.x, player.character.y))
@@ -185,18 +195,30 @@ while run:
         if run_time > 75000 and run_time % 3000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 30,20, 0.7, (player.character.x, player.character.y))
             projectiles3.add(projectile)
+        if run_time > 90000 and run_time % 5000 == 0:
+            projectile = Projectile(enemy.character.x, enemy.character.y, 15,3, 1.3, (player.character.x, player.character.y))
+            projectiles4.add(projectile)
+        if run_time > 90000 and run_time % 1000 == 0:
+            projectile = Projectile(enemy.character.x, enemy.character.y, 10,5, 0.8, (player.character.x, player.character.y))
+            projectiles5.add(projectile)
     if show_player == True:
         pygame.draw.rect(screen, (0, 255, 0), player.character)
     if show_projectiles == True:
         projectiles.update()
         projectiles2.update()
         projectiles3.update()
+        projectiles4.update()
+        projectiles5.update()
         for projectile in projectiles:
             pygame.draw.rect(screen, (0, 0, 255), projectile.character)
         for projectile in projectiles2:
             pygame.draw.rect(screen, (100, 100, 255), projectile.character)
         for projectile in projectiles3:
             pygame.draw.rect(screen, (255, 255, 255), projectile.character)
+        for projectile in projectiles4:
+            pygame.draw.rect(screen, (255, 100, 100), projectile.character)
+        for projectile in projectiles5:
+            pygame.draw.rect(screen, (100, 255, 255), projectile.character)
 
     key = pygame.key.get_pressed()
     if key[pygame.K_a]:
