@@ -41,7 +41,6 @@ class Player(Character):
         self.lives = lives
     
 
-
 class Enemy(Character):
     def __init__(self, x, y, health, damage, speed, direction):
         super().__init__(x, y, health, damage, speed)
@@ -85,7 +84,21 @@ class Projectile(pygame.sprite.Sprite):
         self.character.topleft = (int(self.pos.x), int(self.pos.y))
         if self.character.x > screen_width or self.character.x < 0 or self.character.y > screen_height or self.character.y < 0:
             self.kill()
-
+def game_end():
+    global lost_start_time
+    global show_player
+    
+    screen.blit(lost_text, (screen_width - lost_text.get_width() - 675, 450))
+    lost_start_time = pygame.time.get_ticks()
+    for enemy in enemies:
+        enemy.kill()
+    for projectile in projectiles:
+        projectile.kill()
+    for projectile in projectiles2:
+        projectile.kill()
+    for projectile in projectiles3:
+        projectile.kill()
+    show_player = False      
 player = Player(800, 500, health, 5, 0.5, lives)
 
 enemy1 = Enemy(random.randint(100, 300), random.randint(600, 1000), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
@@ -112,7 +125,7 @@ while run:
     lives_text = font.render(f'Lives: {player.lives}', True, (255, 0, 0))
     timer_text = font.render(f'Time: {run_time // 1000}', True, (255, 0, 0))
 
-    lost_text = font.render(f'You have lost', True, (255, 0, 0))
+    lost_text = font.render(f'You loose', True, (255, 0, 0))
     screen.blit(health_text, (screen_width - health_text.get_width() - 10, 10))
     screen.blit(timer_text, (10, 10))
     screen.blit(lives_text, (screen_width - lives_text.get_width() - 200, 10))
@@ -144,6 +157,9 @@ while run:
         life_cd = True
         
     if display_lost_life:
+        if player.lives == 0:
+            life_cd = False
+            display_lost_life = False
         if pygame.time.get_ticks() - lost_start_time > 3000:
             display_lost_life = False
             life_cd = False
@@ -200,14 +216,7 @@ while run:
             enemy.move_left_right()
     
     if player.lives <= 0:
-        screen.blit(lost_text, (screen_width - lost_text.get_width() - 675, 450))
-        lost_start_time = pygame.time.get_ticks()
-        for enemy in enemies:
-            enemy.kill()
-        for projectile in projectiles:
-            projectile.kill()
-        show_player = False      
-
+        game_end()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False 
