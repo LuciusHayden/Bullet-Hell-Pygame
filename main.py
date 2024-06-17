@@ -1,13 +1,13 @@
 import pygame
 import random
 import math
-import time
+
 
 pygame.init()
 pygame.font.init()
 font = pygame.font.SysFont('Comic Sans MS', 30)
 
-screen_width = 1600
+screen_width = 1800
 screen_height = 1000
 
 screen = pygame.display.set_mode((screen_width, screen_height))
@@ -16,6 +16,8 @@ projectiles2 = pygame.sprite.Group()
 projectiles3 = pygame.sprite.Group()
 projectiles4 = pygame.sprite.Group()
 projectiles5 = pygame.sprite.Group()
+allProjectiles = pygame.sprite.Group()
+
 enemies = pygame.sprite.Group()
 
 difficulty = "easy"
@@ -76,8 +78,7 @@ class Projectile(pygame.sprite.Sprite):
         self.character = pygame.Rect(x, y, size, size) 
         self.speed = speed
         self.target = target
-        self.pos = pygame.math.Vector2(x, y) 
-
+        self.pos = pygame.math.Vector2(x, y)
         direction_vector = pygame.math.Vector2(player.character.x - x, player.character.y - y)
         self.velocity = direction_vector.normalize() * self.speed
 
@@ -86,6 +87,7 @@ class Projectile(pygame.sprite.Sprite):
         self.character.topleft = (int(self.pos.x), int(self.pos.y))
         if self.character.x > screen_width or self.character.x < 0 or self.character.y > screen_height or self.character.y < 0:
             self.kill()
+
 def game_end():
     global lost_start_time
     global show_player
@@ -99,9 +101,13 @@ def game_end():
         projectile.kill()
     for projectile in projectiles3:
         projectile.kill()
+    for projectile in projectiles4:
+        projectile.kill()
+    for projectile in projectiles5:
+        projectile.kill()
     show_player = False      
 
-player = Player(800, 500, health, 5, 0.5, lives)
+player = Player(screen_height // 2, screen_width // 2, health, 5, 1, lives)
 
 enemy1 = Enemy(random.randint(100, 300), random.randint(600, 1000), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
 enemy2 = Enemy(random.randint(1200, 1500), random.randint(200, 500), health * 1.2, 7, 1, random.choice(["up", "down", "left", "right"]))
@@ -118,6 +124,8 @@ cd_start = None
 lost = False
 run = True
 show_player = True
+
+
 while run:
     run_time = pygame.time.get_ticks()
     
@@ -172,46 +180,53 @@ while run:
             display_lost_life = False
             life_cd = False
 
-   
+
+
 #Handles the projectiles
 #multiple projectile types at the same time from all enemies
+
+
     for enemy in enemies:
         if run_time % 1000 == 0:
-            projectile = Projectile(enemy.character.x, enemy.character.y, 15,10, 0.3, (player.character.x, player.character.y))
+            projectile = Projectile(enemy.character.x, enemy.character.y, 15,10, 0.8, (player.character.x, player.character.y))
             projectiles.add(projectile)
+            allProjectiles.add(projectile)
         if run_time > 15000 and run_time % 2000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 20,15, 0.5, (player.character.x, player.character.y))
             projectiles2.add(projectile)
+            allProjectiles.add(projectile)
             enemy.damage += 1
         if run_time > 30000 and run_time % 3000 == 0:
-            projectile = Projectile(enemy.character.x, enemy.character.y, 30,20, 0.7, (player.character.x, player.character.y))
+            projectile = Projectile(enemy.character.x, enemy.character.y, 30,20, 0.5, (player.character.x, player.character.y))
             projectiles3.add(projectile)
+            allProjectiles.add(projectile)
             enemy.damage += 2
         if run_time > 45000 and run_time % 2000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 15,10, 0.3, (player.character.x, player.character.y))
             projectiles.add(projectile)
+            allProjectiles.add(projectile)
         if run_time > 60000 and run_time % 3000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 20,15, 0.5, (player.character.x, player.character.y))
             projectiles2.add(projectile)
+            allProjectiles.add(projectile)
         if run_time > 75000 and run_time % 3000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 30,20, 0.7, (player.character.x, player.character.y))
             projectiles3.add(projectile)
+            allProjectiles.add(projectile)
         if run_time > 90000 and run_time % 5000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 15,3, 1.3, (player.character.x, player.character.y))
             projectiles4.add(projectile)
+            allProjectiles.add(projectile)
         if run_time > 90000 and run_time % 1000 == 0:
             projectile = Projectile(enemy.character.x, enemy.character.y, 10,5, 0.8, (player.character.x, player.character.y))
             projectiles5.add(projectile)
+            allProjectiles.add(projectile)
 #handles showing the player and the projectiles which is useful for other functions
     if show_player == True:
         pygame.draw.rect(screen, (0, 255, 0), player.character)
 # updates the projectile locations and draws them into the screen ONLY if show_projectiles is true
     if show_projectiles == True:
-        projectiles.update()
-        projectiles2.update()
-        projectiles3.update()
-        projectiles4.update()
-        projectiles5.update()
+        allProjectiles.update()
         for projectile in projectiles:
             pygame.draw.rect(screen, (0, 0, 255), projectile.character)
         for projectile in projectiles2:
@@ -222,6 +237,7 @@ while run:
             pygame.draw.rect(screen, (255, 100, 100), projectile.character)
         for projectile in projectiles5:
             pygame.draw.rect(screen, (100, 255, 255), projectile.character)
+
 
 #handles the movement of the player
     key = pygame.key.get_pressed()
@@ -240,6 +256,7 @@ while run:
             enemy.move_up_down()
         elif enemy.direction in ["left", "right"]:
             enemy.move_left_right()
+
 #Handles the game ending
     if player.lives <= 0:
         game_end()

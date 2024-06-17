@@ -4,7 +4,7 @@
 Hello, my name is Lucius, this is my second decent sized project. In this project my goal was to get better at using classes as well as learning pygame, the project defiently helped me learn how to use classes in a more useful way and understand them further. I also know the basics of Pygame which I plan on trying to make a few more projects in the future. I have a youtube channel where I post a few small tutorials or showcase what ive made if you want to check that out! I will probably make a video about this project soon.
 
 - https://www.youtube.com/channel/UCm9ThRewmidHy0fyzIX_VKg (channel link)
-- (video link (not finished currently))
+- https://youtu.be/oGdAo2TIqLQ (video link (showcase at the beginning, code walkthrough afterwards))
 
 # Features
 
@@ -19,6 +19,8 @@ This is just a simple game, doesnt really have any special features other than j
 - Lives and Health reminder at the top. A basic feature that almost every game has to show you how many lives you have remaining and how much health you have left.
 
 - If a player tries to hide behind the walls of the game they will take continuous damage (1 per 200 ms) until they return to the map. This allows for more interesting ways to escape a bunch of projectiles while stilling having a cost for a 'get out of jail free card'
+
+- Protection after losing a life or losing a little bit of health in order to give you a breather after dying (and so you dont dye again instantly)
 
 # Lessons learned
 
